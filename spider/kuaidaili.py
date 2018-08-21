@@ -1,4 +1,5 @@
 import requests
+from bson import ObjectId
 from bs4 import BeautifulSoup
 from multiprocessing import Pool
 from db.mongo_driver import MongoDB
@@ -16,6 +17,8 @@ def get_ip(page):
     for ip, port in zip(ips, ports):
         item['ip'] = ip.text
         item['port'] = port.text
+        '''生成唯一ID'''
+        item['_id'] = ObjectId().from_datetime()
         print(item)
         store_ip(item)
 
