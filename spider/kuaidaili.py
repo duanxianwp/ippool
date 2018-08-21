@@ -12,26 +12,30 @@ def get_ip(page):
     soup = BeautifulSoup(source, 'lxml')
     ips = soup.select('.table > tbody > tr > td:nth-of-type(1)')
     ports = soup.select('.table > tbody > tr > td:nth-of-type(2)')
-    items = []
     item = {}
     for ip, port in zip(ips, ports):
         item['ip'] = ip.text
         item['port'] = port.text
-        items.append(item)
-
-    return items
+        print(item)
+        store_ip(item)
 
 
 def store_ip(item):
     '''检查是否可用'''
     if not is_success(item):
         return
-    client = mongo.get_client()
-    db = mongo.get_database(client, 'ippool')
-    tb = mongo.get_table(db, 'ip_record')
-    '''检查是否已存在'''
-    if tb.find_one({'ip': item['ip']}) is None:
-        tb.insert_one(item)
+    try:
+        client = mongo.get_client()
+        db = mongo.get_database(client, 'ippool')
+        tb = mongo.get_table(db, 'ip_record')
+        '''检查是否已存在'''
+        if tb.find_one({'ip': item['ip']}) is None:
+            tb.insert_one(item)
+    except Exception as e:
+        # 日志就不打印了
+        pass
+    finally:
+        client.close()
 
 
 '''ip可用性检查'''
@@ -49,7 +53,7 @@ def is_success(item):
     return True
 
 
-if __name__ == '__main__':
+def run():
     begin = 1
     end = 100
     pool = Pool()
