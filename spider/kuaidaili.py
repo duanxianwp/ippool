@@ -49,6 +49,3 @@ def run():
     pool = Pool()
     pool.map(get_ip, [page for page in range(begin, end + 1)])
     pool.close()
-
-
-run()
