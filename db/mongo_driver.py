@@ -15,5 +15,8 @@ class MongoDB:
     def get_table(self, db, tbName='defaultTB'):
         return db[tbName]
 
+    def get_table_by_db_and_tb(self, dbName, tbName):
+        return MongoDB.get_client()[dbName][tbName]
+
     def close(self, client):
         client.close()

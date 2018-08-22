@@ -1,6 +1,6 @@
 import copy
 import requests
-from db import ip_validate
+from util import ip_validate
 from bs4 import BeautifulSoup
 from multiprocessing import Pool
 from multiprocessing import Lock
