@@ -1,15 +1,19 @@
+import copy
 import requests
-from bson import ObjectId
+from db import ip_validate
 from bs4 import BeautifulSoup
 from multiprocessing import Pool
 from db.mongo_driver import MongoDB
 
 mongo = MongoDB()
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+}
 
 
 def get_ip(page):
     url = 'https://www.kuaidaili.com/free/inha/{}/'.format(page)
-    source = requests.get(url).text
+    source = requests.get(url, headers=headers).text
     soup = BeautifulSoup(source, 'lxml')
     ips = soup.select('.table > tbody > tr > td:nth-of-type(1)')
     ports = soup.select('.table > tbody > tr > td:nth-of-type(2)')
@@ -17,15 +21,13 @@ def get_ip(page):
     for ip, port in zip(ips, ports):
         item['ip'] = ip.text
         item['port'] = port.text
-        '''生成唯一ID'''
-        item['_id'] = ObjectId().from_datetime()
-        print(item)
-        store_ip(item)
+        '''使用copy'''
+        store_ip(copy.copy(item))
 
 
 def store_ip(item):
     '''检查是否可用'''
-    if not is_success(item):
+    if not ip_validate.is_success(item):
         return
     try:
         client = mongo.get_client()
@@ -41,24 +43,12 @@ def store_ip(item):
         client.close()
 
 
-'''ip可用性检查'''
-
-
-def is_success(item):
-    try:
-        _url = 'https://www.baidu.com'
-        session = requests.session()
-        session.proxies = {'http': '{}:{}'.format(item['ip'], item['port'])}
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0'}
-        session.get(_url, timeout=10, headers=headers)
-    except BaseException as e:
-        return False
-    return True
-
-
 def run():
     begin = 1
     end = 100
     pool = Pool()
     pool.map(get_ip, [page for page in range(begin, end + 1)])
     pool.close()
+
+
+run()
