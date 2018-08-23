@@ -4,4 +4,4 @@ from job import spider_task
 
 
 def run():
-    spider_task.spider_job_run("19:57")
+    spider_task.spider_job_run("00:00")
