@@ -11,11 +11,14 @@ time_out = 60 * 60
 
 def job():
     mongo = mongo_driver.MongoDB()
-    tb = mongo.get_table_by_db_and_tb('ippool', 'iprecord')
+    client = mongo.get_client()
+    tb = mongo.get_table_by_db_and_tb('ippool', 'iprecord', client)
     for item in tb.find():
         if not ip_util.is_success(item):
             tb.delete_one({'ip': item['ip'], 'port': item['port']})
-    if tb.find().count() < 500:
+    count = tb.find().count()
+    client.close()
+    if count < 500:
         spider_job = job_util.get_job_kv('spider_task')
         if (spider_job is None) or (
                 (spider_job['status'] is False) and (spider_job['update_at'] - time.time() > time_out)):
@@ -27,3 +30,6 @@ def keep_alive_job():
     while True:
         schedule.run_pending()
         time.sleep(1)
+
+
+job()

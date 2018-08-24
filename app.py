@@ -1,5 +1,5 @@
 from flask import Flask
-from job import job_manager
+from api.ip_api import get_ip
 
 app = Flask(__name__)
 
@@ -9,10 +9,9 @@ def hello_world():
     return 'Hello World!'
 
 
-@app.route('/job')
-async def run_job():
-    await job_manager.run()
-    return "haha"
+@app.route('/api')
+def ip_api():
+    return str(get_ip())
 
 
 if __name__ == '__main__':
