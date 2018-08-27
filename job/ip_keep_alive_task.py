@@ -19,10 +19,7 @@ def job():
     count = tb.find().count()
     client.close()
     if count < 500:
-        spider_job = job_util.get_job_kv('spider_task')
-        if (spider_job is None) or (
-                (spider_job['status'] is False) and (spider_job['update_at'] - time.time() > time_out)):
-            spider_task.job()
+        job_util.notify_spider_run()
 
 
 def keep_alive_job():
@@ -30,6 +27,3 @@ def keep_alive_job():
     while True:
         schedule.run_pending()
         time.sleep(1)
-
-
-job()

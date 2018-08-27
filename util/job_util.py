@@ -25,3 +25,10 @@ def get_job_kv(job_name):
     item = tb.find_one(item)
     client.close()
     return item
+
+
+def notify_spider_run():
+    spider_job = job_util.get_job_kv('spider_task')
+    if (spider_job is None) or (
+            (spider_job['status'] is False) and (spider_job['update_at'] - time.time() > time_out)):
+        spider_task.job()
