@@ -2,11 +2,7 @@ import schedule
 import time
 from util import ip_util
 from util import job_util
-from job import spider_task
 from db import mongo_driver
-
-# 爬虫job执行的时间与当前时间的差值大于这个值就 执行
-time_out = 60 * 60
 
 
 def job():

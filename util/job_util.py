@@ -1,5 +1,6 @@
-from db.mongo_driver import MongoDB
 import time
+from job import spider_task
+from db.mongo_driver import MongoDB
 
 mongo = MongoDB()
 
@@ -28,7 +29,9 @@ def get_job_kv(job_name):
 
 
 def notify_spider_run():
-    spider_job = job_util.get_job_kv('spider_task')
+    spider_job = get_job_kv('spider_task')
+    # job是暂停的,job的最近一次启动时间与现在间隔1个小时以上
+    time_out = 60 * 60
     if (spider_job is None) or (
             (spider_job['status'] is False) and (spider_job['update_at'] - time.time() > time_out)):
         spider_task.job()
