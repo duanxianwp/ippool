@@ -11,7 +11,11 @@ def hello_world():
 
 @app.route('/api')
 def ip_api():
-    return str(get_ip())
+    try:
+        ip = str(get_ip())
+        return ip
+    except Exception as e:
+        return str(e)
 
 
 if __name__ == '__main__':
