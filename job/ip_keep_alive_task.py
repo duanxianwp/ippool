@@ -1,5 +1,3 @@
-import schedule
-import time
 from util import ip_util
 from util import job_util
 from db import mongo_driver
@@ -18,8 +16,4 @@ def job():
         job_util.notify_spider_run()
 
 
-def keep_alive_job():
-    schedule.every(2).hour.do(job)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+
