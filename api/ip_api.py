@@ -1,6 +1,7 @@
 from db.mongo_driver import MongoDB
 from util import ip_util
 from util import job_util
+import random
 
 
 def get_ip():
@@ -8,7 +9,9 @@ def get_ip():
     client = mongo.get_client()
     tb = mongo.get_table_by_db_and_tb('ippool', 'ip_record', client)
     while True:
-        record = tb.find_one()
+        count = tb.find().count()
+        it = tb.find().limit(1).skip(random.randint(0, count))
+        record = it.next()
         if record is None:
             job_util.notify_spider_run()
             raise Exception("ip资源不足")
