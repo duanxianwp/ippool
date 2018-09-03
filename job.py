@@ -9,7 +9,7 @@ def run_threaded(job_func):
     job_thread.start()
 
 schedule.every().day.at('00:00').do(run_threaded,spider_task.job)
-schedule.every(2).hour.do(run_threaded,ip_keep_alive_task.job)
+schedule.every(2).hours.do(run_threaded,ip_keep_alive_task.job)
 
 while 1:
     schedule.run_pending()
