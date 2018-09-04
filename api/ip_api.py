@@ -18,4 +18,5 @@ def get_ip():
             job_util.notify_spider_run()
 
         if ip_util.is_success(record):
+            record.pop('_id')
             return record
