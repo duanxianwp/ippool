@@ -13,7 +13,7 @@ def set_job_kv(job_name, status):
         'status': status,
         'update_at': time.time()
     }
-    tb.find_and_modify(item, upsert=True)
+    tb.update(item, item, upsert=True)
     client.close()
 
 
